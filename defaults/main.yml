@@ -1,0 +1,26 @@
+---
+postgresql_version: 9.4
+postgresql_repo_apt_key: http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc
+postgresql_repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
+
+postgresql_install_development_headers: true
+postgresql_user: postgres
+postgresql_group: postgres
+
+postgresql_shared_buffers: 256MB
+postgresql_work_mem:  8MB
+postgresql_effective_cache_size: 1024MB
+postgresql_checkpoint_completion_target: 0.5
+# 9.4 specific
+postgresql_checkpoint_segments: 3
+# 9.5 specific
+postgresql_max_wal_size: 1GB
+
+postgresql_unix_socket_auth_method: trust
+
+pg_backup_dir: /backups/postgresql/
+pg_backup_bin_dir: /backups/postgresql/bin
+pg_backup_day_of_week_to_keep: 6
+pg_backup_days_to_keep: 14
+pg_backup_weeks_to_keep: 10
+pg_backup_email: sysadmin@example.org

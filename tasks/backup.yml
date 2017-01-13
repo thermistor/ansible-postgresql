@@ -1,0 +1,33 @@
+---
+
+# - name: Create a system user for postgres backups
+#   user: name={{ pg_backup_user }} shell=/bin/bash comment="Postgres backup" state=present
+
+# - name: Create a postgres user with db permissions to run backups
+#   postgresql_user: name={{ pg_backup_user }} password={{ pg_backup_password }} db=ALL priv=SELECT
+
+# - name: install a .pg_pass file for the postgres backup user
+
+- name: Create a backups directory
+  file: path={{ pg_backup_bin_dir }} owner=postgres group=postgres mode=0700 recurse=yes state=directory
+
+#  These scripts come from https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux
+- name: Install pg_backup.config file
+  template: src=pg_backup.config
+            dest={{ pg_backup_bin_dir }}/pg_backup.config
+            mode=0600 owner=postgres group=postgres
+
+- name: Install pg_backup_rotated.sh script
+  template: src=pg_backup_rotated.sh
+            dest={{ pg_backup_bin_dir }}/pg_backup_rotated.sh
+            mode=0700 owner=postgres group=postgres
+
+# - name: Configure cron to run the backup script
+#   cron: name="pg_backup" weekday="*" minute=0 hour=3
+#         user="postgres" job="{{pg_backup_bin_dir}}/pg_backup_rotated.sh"
+#         cron_file=pg_backup
+
+# We use a template instead of cron action so we can use a MAILTO which cron action does not support yet
+#   track this issue here: https://github.com/ansible/ansible/issues/3106
+- name: Configure cron to run the backup script
+  template: src=pg_backup_cron dest=/etc/cron.d/pg_backup owner=root group=root mode=0644

@@ -1,0 +1,47 @@
+---
+
+- include: repository.yml
+
+- name: Install PostgreSQL support packages
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - python-psycopg2
+
+- name: Install PostgreSQL server and client
+  apt: pkg={{ item }}-{{ postgresql_version }} state=installed
+  register: postgresql_install
+  with_items:
+    - postgresql
+    - postgresql-contrib
+
+- name: Install development header files
+  apt: pkg={{ item }} state=installed
+  with_items:
+    - libpq-dev
+  when: postgresql_install_development_headers == true
+
+#  TODO: test this on a trusty
+# - name: Install PostgreSQL pg_hba config file
+#   template: src=pg_hba.{{ ansible_distribution_release }}.conf
+#             dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
+#             owner={{ postgresql_user }} group={{ postgresql_group }}
+#   register: pg_hba
+#   notify:
+#     - restart postgresql
+#   tags:
+#     - postgresql
+
+# - name: restart postgres immediately when pg_hba has changed so peer auth works for later commands
+#   service: name=postgresql state=restarted
+#   when: pg_hba.changed
+
+- name: Install PostgreSQL config file
+  template: src=postgresql.{{ ansible_distribution_release }}.conf
+            dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+            owner={{ postgresql_user }} group={{ postgresql_group }}
+  notify:
+    - restart postgresql
+
+- include: backup.yml
+  tags:
+    - pg-backup
