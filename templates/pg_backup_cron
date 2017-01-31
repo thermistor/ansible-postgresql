@@ -1,4 +1,4 @@
 # This file managed by ansible
 # backup postgres databases
 MAILTO={{ pg_backup_email }}
-0 3 * * * {{ pg_backup_bin_dir }}/pg_backup_rotated.sh > /dev/null
+0 3 * * * postgres {{ pg_backup_bin_dir }}/pg_backup_rotated.sh > /dev/null
