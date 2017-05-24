@@ -13,12 +13,20 @@
   with_items:
     - postgresql
     - postgresql-contrib
+  when: postgresql_install_server
+
+- name: Install just PostgreSQL client
+  apt: pkg={{ item }}-{{ postgresql_version }} state=installed
+  register: postgresql_install
+  with_items:
+    - postgresql-client
+  when: not postgresql_install_server
 
 - name: Install development header files
   apt: pkg={{ item }} state=installed
   with_items:
     - libpq-dev
-  when: postgresql_install_development_headers == true
+  when: postgresql_install_development_headers
 
 #  TODO: test this on a trusty
 # - name: Install PostgreSQL pg_hba config file
@@ -39,9 +47,11 @@
   template: src=postgresql.{{ ansible_distribution_release }}.conf
             dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
             owner={{ postgresql_user }} group={{ postgresql_group }}
+  when: postgresql_install_server
   notify:
     - restart postgresql
 
 - include: backup.yml
+  when: postgresql_install_server
   tags:
     - pg-backup
