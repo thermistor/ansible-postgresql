@@ -25,3 +25,5 @@ pg_backup_day_of_week_to_keep: 6
 pg_backup_days_to_keep: 14
 pg_backup_weeks_to_keep: 10
 pg_backup_email: sysadmin@example.org
+pg_backup_enable_custom_backups: yes
+pg_backup_enable_plain_backups: no
