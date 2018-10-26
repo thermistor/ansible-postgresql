@@ -3,12 +3,10 @@
 - include: repository.yml
 
 - name: Install PostgreSQL support packages
-  apt: pkg={{ item }} state=installed
-  with_items:
-    - python-psycopg2
+  apt: pkg=python3-psycopg2 state=present
 
 - name: Install PostgreSQL server and client
-  apt: pkg={{ item }}-{{ postgresql_version }} state=installed
+  apt: pkg={{ item }}-{{ postgresql_version }} state=present
   register: postgresql_install
   with_items:
     - postgresql
@@ -16,35 +14,18 @@
   when: postgresql_install_server
 
 - name: Install just PostgreSQL client
-  apt: pkg={{ item }}-{{ postgresql_version }} state=installed
+  apt: pkg={{ item }}-{{ postgresql_version }} state=present
   register: postgresql_install
   with_items:
     - postgresql-client
   when: not postgresql_install_server
 
 - name: Install development header files
-  apt: pkg={{ item }} state=installed
-  with_items:
-    - libpq-dev
+  apt: pkg=libpq-dev state=present
   when: postgresql_install_development_headers
 
-#  TODO: test this on a trusty
-# - name: Install PostgreSQL pg_hba config file
-#   template: src=pg_hba.{{ ansible_distribution_release }}.conf
-#             dest=/etc/postgresql/{{ postgresql_version }}/main/pg_hba.conf
-#             owner={{ postgresql_user }} group={{ postgresql_group }}
-#   register: pg_hba
-#   notify:
-#     - restart postgresql
-#   tags:
-#     - postgresql
-
-# - name: restart postgres immediately when pg_hba has changed so peer auth works for later commands
-#   service: name=postgresql state=restarted
-#   when: pg_hba.changed
-
 - name: Install PostgreSQL config file
-  template: src=postgresql.{{ ansible_distribution_release }}.conf
+  template: src=postgresql.{{ ansible_distribution_release }}.conf.j2
             dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
             owner={{ postgresql_user }} group={{ postgresql_group }}
   when: postgresql_install_server
