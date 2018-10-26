@@ -16,4 +16,3 @@
   template:
     src: pinned_postgresql.j2
     dest: /etc/apt/preferences.d/pinned_postgresql
-
