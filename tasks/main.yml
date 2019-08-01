@@ -5,29 +5,29 @@
 - name: Install PostgreSQL support packages
   apt: pkg=python3-psycopg2 state=present
 
-- name: Install PostgreSQL server and client
-  apt: pkg={{ item }}-{{ postgresql_version }} state=present
-  register: postgresql_install
-  with_items:
-    - postgresql
-    - postgresql-contrib
+- name: Install PostgreSQL server
+  apt:
+    pkg: ["{{ postgresql_server_pkg }}", "{{ postgresql_contrib_pkg }}"]
+    state: present
   when: postgresql_install_server
 
-- name: Install just PostgreSQL client
-  apt: pkg={{ item }}-{{ postgresql_version }} state=present
-  register: postgresql_install
-  with_items:
-    - postgresql-client
-  when: not postgresql_install_server
+- name: Install PostgreSQL client
+  apt:
+    pkg: postgresql-client-{{ postgresql_version }}
+    state: present
 
 - name: Install development header files
-  apt: pkg=libpq-dev state=present
+  apt:
+    pkg: libpq-dev
+    state: present
   when: postgresql_install_development_headers
 
 - name: Install PostgreSQL config file
-  template: src=postgresql.{{ ansible_distribution_release }}.conf.j2
-            dest=/etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
-            owner={{ postgresql_user }} group={{ postgresql_group }}
+  template:
+    src: postgresql.{{ ansible_distribution_release }}.conf.j2
+    dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
+    owner: "{{ postgresql_user }}"
+    group: "{{ postgresql_group }}"
   when: postgresql_install_server
   notify:
     - restart postgresql
