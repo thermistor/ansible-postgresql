@@ -1,6 +1,6 @@
 ---
 postgresql_install_server: true
-postgresql_version: 9.6
+postgresql_version: 12
 postgresql_repo_apt_key: http://apt.postgresql.org/pub/repos/apt/ACCC4CF8.asc
 postgresql_repo: 'deb http://apt.postgresql.org/pub/repos/apt/ {{ ansible_distribution_release }}-pgdg main'
 postgresql_server_pkg: postgresql-{{ postgresql_version }}
