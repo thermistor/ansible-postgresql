@@ -2,10 +2,14 @@
 
 # Needed for add-apt-repository
 - name: Install python-software-properties
-  apt: pkg=python3-software-properties state=present
+  apt:
+    pkg: python3-software-properties
+    state: present
 
 - name: Add the PostgreSQL repository key
-  apt_key: url={{ postgresql_repo_apt_key }} state=present
+  apt_key:
+    url: "{{ postgresql_repo_apt_key }}"
+    state: present
 
 - name: Add PostgreSQL repository
   apt_repository: repo='{{ postgresql_repo }}' state=present
