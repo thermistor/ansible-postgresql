@@ -1,19 +1,18 @@
 galaxy_info:
+  role_name: postgresql
+  namespace: thermistor
   author: Weston Triemstra
   description: Configure postgresql
   company: Netsign
 
   license: MIT
 
-  min_ansible_version: 1.2
+  min_ansible_version: '2.16'
 
   platforms:
-  - name: Ubuntu
-    versions:
-    - trusty
-    - xenial
-    - bionic
-    - focal
+    - name: Ubuntu
+      versions:
+        - jammy
 
   galaxy_tags:
     - postgresql

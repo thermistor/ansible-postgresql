@@ -1,38 +1,43 @@
 ---
 
-- include: repository.yml
+- name: Import repository tasks
+  ansible.builtin.import_tasks: repository.yml
 
 - name: Install PostgreSQL support packages
-  apt: pkg=python3-psycopg2 state=present
+  ansible.builtin.apt:
+    pkg: python3-psycopg2
+    state: present
 
 - name: Install PostgreSQL server
-  apt:
+  ansible.builtin.apt:
     pkg: ["{{ postgresql_server_pkg }}", "{{ postgresql_contrib_pkg }}"]
     state: present
   when: postgresql_install_server
 
 - name: Install PostgreSQL client
-  apt:
+  ansible.builtin.apt:
     pkg: postgresql-client-{{ postgresql_version }}
     state: present
 
 - name: Install development header files
-  apt:
+  ansible.builtin.apt:
     pkg: libpq-dev
     state: present
   when: postgresql_install_development_headers
 
 - name: Install PostgreSQL config file
-  template:
+  ansible.builtin.template:
     src: postgresql.{{ ansible_distribution_release }}.conf.j2
     dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
     owner: "{{ postgresql_user }}"
     group: "{{ postgresql_group }}"
+    mode: '0644'
   when: postgresql_install_server
   notify:
-    - restart postgresql
+    - Restart postgresql
 
-- include: backup.yml
+- name: Import backup tasks
+  ansible.builtin.import_tasks: backup.yml
   when: postgresql_install_server
   tags:
     - pg-backup

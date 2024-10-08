@@ -2,21 +2,24 @@
 
 # Needed for add-apt-repository
 - name: Install python-software-properties
-  apt:
+  ansible.builtin.apt:
     pkg: python3-software-properties
     state: present
 
 - name: Add the PostgreSQL repository key
-  apt_key:
+  ansible.builtin.apt_key:
     url: "{{ postgresql_repo_apt_key }}"
     state: present
 
 - name: Add PostgreSQL repository
-  apt_repository: repo='{{ postgresql_repo }}' state=present
+  ansible.builtin.apt_repository:
+    repo: "{{ postgresql_repo }}"
+    state: present
 
 # test with `apt-cache policy postgresql-9.4`
 # from https://github.com/ansible/ansible-modules-core/issues/19
 - name: Pin the postgresql version so we don't get two version running simultaneously
-  template:
+  ansible.builtin.template:
     src: pinned_postgresql.j2
     dest: /etc/apt/preferences.d/pinned_postgresql
+    mode: '0644'

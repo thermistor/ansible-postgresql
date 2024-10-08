@@ -11,7 +11,7 @@ postgresql_user: postgres
 postgresql_group: postgres
 
 postgresql_shared_buffers: 256MB
-postgresql_work_mem:  8MB
+postgresql_work_mem: 8MB
 postgresql_effective_cache_size: 1024MB
 postgresql_checkpoint_completion_target: 0.5
 # 9.4 specific
@@ -27,5 +27,5 @@ pg_backup_day_of_week_to_keep: 6
 pg_backup_days_to_keep: 14
 pg_backup_weeks_to_keep: 10
 pg_backup_email: sysadmin@example.org
-pg_backup_enable_custom_backups: yes
-pg_backup_enable_plain_backups: no
+pg_backup_enable_custom_backups: true
+pg_backup_enable_plain_backups: false
