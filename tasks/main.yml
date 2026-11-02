@@ -27,7 +27,7 @@
 
 - name: Install PostgreSQL config file
   ansible.builtin.template:
-    src: postgresql.{{ ansible_distribution_release }}.conf.j2
+    src: postgresql.{{ ansible_facts['distribution_release'] }}.conf.j2
     dest: /etc/postgresql/{{ postgresql_version }}/main/postgresql.conf
     owner: "{{ postgresql_user }}"
     group: "{{ postgresql_group }}"

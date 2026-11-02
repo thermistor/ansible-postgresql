@@ -14,7 +14,6 @@
     owner: postgres
     group: postgres
     mode: '0700'
-    recurse: true
     state: directory
 
 #  These scripts come from https://wiki.postgresql.org/wiki/Automated_Backup_on_Linux

@@ -1,20 +1,40 @@
 ---
 
-# Needed for add-apt-repository
-- name: Install python-software-properties
+# Needed for deb822_repository
+- name: Install python3-debian
   ansible.builtin.apt:
-    pkg: python3-software-properties
+    pkg: python3-debian
     state: present
 
-- name: Add the PostgreSQL repository key
-  ansible.builtin.apt_key:
-    url: "{{ postgresql_repo_apt_key }}"
-    state: present
+- name: Download the PostgreSQL repository signing key
+  ansible.builtin.get_url:
+    url: "{{ postgresql_repo_key_url }}"
+    dest: /etc/apt/keyrings/postgresql.asc
+    owner: root
+    group: root
+    mode: '0644'
+
+# Superseded by the deb822 pgdg.sources file, remove it so apt doesn't see the repo twice
+# - name: Remove the legacy PostgreSQL apt_repository source
+#   ansible.builtin.file:
+#     path: /etc/apt/sources.list.d/apt_postgresql_org_pub_repos_apt.list
+#     state: absent
 
 - name: Add PostgreSQL repository
-  ansible.builtin.apt_repository:
-    repo: "{{ postgresql_repo }}"
+  ansible.builtin.deb822_repository:
+    name: pgdg
+    types: deb
+    uris: "{{ postgresql_repo_uri }}"
+    suites: "{{ postgresql_repo_suite }}"
+    components: main
+    signed_by: /etc/apt/keyrings/postgresql.asc
     state: present
+  register: postgresql_repository
+
+- name: Update apt cache if the PostgreSQL repository changed
+  ansible.builtin.apt:
+    update_cache: true
+  when: postgresql_repository is changed
 
 # test with `apt-cache policy postgresql-9.4`
 # from https://github.com/ansible/ansible-modules-core/issues/19
