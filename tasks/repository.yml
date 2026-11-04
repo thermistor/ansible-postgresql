@@ -34,7 +34,7 @@
 - name: Update apt cache if the PostgreSQL repository changed
   ansible.builtin.apt:
     update_cache: true
-  when: postgresql_repository is changed
+  when: postgresql_repository is changed  # noqa: no-handler
 
 # test with `apt-cache policy postgresql-9.4`
 # from https://github.com/ansible/ansible-modules-core/issues/19
